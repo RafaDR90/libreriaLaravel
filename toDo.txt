@@ -1,0 +1,7 @@
+crear pestaña para admins gestion de libros
+
+mostrar historial de anomalias
+
+filtrar por categorias de libros
+
+en libros en vez de mostrar id, mostrar correo del usuario
