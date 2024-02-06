@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Libro;
 use App\Models\Prestamo;
 use App\Models\Anomalia;
+use App\Models\User as ModelsUser;
 
 class LibroController extends Controller
 {
@@ -90,9 +96,11 @@ class LibroController extends Controller
         //obtiene los libros con los id
         $libros = [];
         foreach ($idLibros as $idLibro) {
+            //obtiene el email del usuario con el id
+            $email = ModelsUser::find($idLibro->usuario_id)->email;
             $libros[] = Libro::find($idLibro->libro_id);
             //añade el id de usuario a cada libro
-            $libros[count($libros) - 1]->usuario_id = $idLibro->usuario_id;
+            $libros[count($libros) - 1]->usuario_id = $email;
         }
         return view('libros/gestion-reservas', ['libros' => $libros]);
     }
@@ -178,6 +186,138 @@ class LibroController extends Controller
             $prestamo->fecha_entrada = date('Y-m-d');
             $prestamo->save();
             return redirect()->route('gestionReservas');
+        }
+    }
+
+
+    /**
+     * Muestra la vista de gestion de libros
+     * @return Application|Factory|View|\Illuminate\Foundation\Application|RedirectResponse
+     */
+    public function gestionLibros()
+    {
+        //comprueba si esta logueado y su rol es admin
+        if (!auth()->check() || auth()->user()->rol != 'admin') {
+            return redirect()->route('welcome');
+        }
+        $libros = Libro::all();
+        return view('libros/gestion-libros', ['libros' => $libros]);
+    }
+
+    public function eliminarLibro($id)
+    {
+        if (!auth()->check() || auth()->user()->rol != 'admin') {
+            return redirect()->route('welcome');
+        }
+        //valida la id
+        $id=(int)$id;
+        $validator = validator(['id' => $id], [
+            'id' => 'required|integer|exists:libros,id',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route('/');
+        }
+        //marco eliminado como true en la bd
+        $libro = Libro::find($id);
+        if ($libro->eliminado==0) {
+            $libro->eliminado = 1;
+        }else{
+            $libro->eliminado = 0;
+        }
+        $libro->save();
+        return redirect()->route('gestionLibros');
+    }
+    public function formEditarLibro($libroId)
+    {
+        if (!auth()->check() || auth()->user()->rol != 'admin') {
+            return redirect()->route('welcome');
+        }
+        //valida la id
+        $libroId=(int)$libroId;
+        $validator = validator(['libroId' => $libroId], [
+            'libroId' => 'required|integer|exists:libros,id',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route('/');
+        }
+        $request = request();
+        if ($request->isMethod('get')) {
+            //obtengo el libro con la id
+            $libro = Libro::find($libroId);
+            return view('libros/add-edit-libro', ['libro' => $libro]);
+        }else {
+            //valida los datos
+            $datos = $request->input('datos');
+
+            if (isset($datos['lanzamiento'])) {
+                $datos['lanzamiento'] = date('Y-m-d', strtotime($datos['lanzamiento']));
+            }
+
+            // Validar los datos
+            $validator = validator($datos, [
+                'titulo' => 'required|string',
+                'autor' => 'required|string',
+                'descripcion' => 'required|string',
+                'categoria' => 'required|string',
+                'lanzamiento' => ['required', 'date', 'date_format:Y-m-d'],
+                'estado' => 'required|in:bueno,malo,critico',
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('/');
+            }
+            //modifica el libro en la base de datos
+            $libro = Libro::find($libroId);
+            $libro->titulo = $request->input('datos.titulo');
+            $libro->autor = $request->input('datos.autor');
+            $libro->descripcion = $request->input('datos.descripcion');
+            $libro->categoria = $request->input('datos.categoria');
+            $libro->lanzamiento = $request->input('datos.lanzamiento');
+            $libro->estado = $request->input('datos.estado');
+            $libro->save();
+            return redirect()->route('gestionLibros');
+        }
+    }
+
+    public function addLibro()
+    {
+        if (!auth()->check() || auth()->user()->rol != 'admin') {
+            return redirect()->route('welcome');
+        }
+        $request = request();
+        if ($request->isMethod('get')) {
+            return view('libros/add-edit-libro');
+        }else {
+            //valida los datos
+            $datos = $request->input('datos');
+
+            if (isset($datos['lanzamiento'])) {
+                $datos['lanzamiento'] = date('Y-m-d', strtotime($datos['lanzamiento']));
+            }
+
+            // Validar los datos
+            $validator = validator($datos, [
+                'titulo' => 'required|string',
+                'autor' => 'required|string',
+                'descripcion' => 'required|string',
+                'categoria' => 'required|string',
+                'lanzamiento' => ['required', 'date', 'date_format:Y-m-d'],
+                'estado' => 'required|in:bueno,malo,critico',
+            ]);
+            if ($validator->fails()) {
+                return redirect()->route('/');
+            }
+            //crea el libro en la base de datos
+            $libro = new Libro();
+            $libro->titulo = $request->input('datos.titulo');
+            $libro->autor = $request->input('datos.autor');
+            $libro->descripcion = $request->input('datos.descripcion');
+            $libro->categoria = $request->input('datos.categoria');
+            $libro->lanzamiento = $request->input('datos.lanzamiento');
+            $libro->estado = $request->input('datos.estado');
+            $libro->prestado = 'no';
+            $libro->eliminado = 0;
+            $libro->save();
+            return redirect()->route('gestionLibros');
         }
     }
 }

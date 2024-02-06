@@ -53,6 +53,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('gestionReservas') }}">{{ __('Gestion de reservas') }}</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('gestionLibros') }}">{{ __('Gestion de libros') }}</a>
+                                </li>
                             @endif
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('libros-reservados') }}">{{ __('Libros reservados') }}</a>

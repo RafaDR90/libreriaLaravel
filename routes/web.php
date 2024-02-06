@@ -30,6 +30,16 @@ Route::get('/confirmarEntrega/{id}', [LibroController::class, 'confirmarEntrega'
 Route::get('/confirmarRecogida/{id}', [LibroController::class, 'confirmarRecogida'])->name('confirmarRecogida');
 Route::post('/confirmarRecogida/{id}', [LibroController::class, 'confirmarRecogida'])->name('confirmarRecogida');
 
+Route::get('/gestionLibros', [LibroController::class, 'gestionLibros'])->name('gestionLibros');
+
+Route::get('/eliminarLibro/{id}', [LibroController::class, 'eliminarLibro'])->name('eliminarLibro');
+
+Route::get('/formEditarLibro/{id}', [LibroController::class, 'formEditarLibro'])->name('formEditarLibro');
+Route::post('/formEditarLibro/{id}', [LibroController::class, 'formEditarLibro'])->name('formEditarLibro');
+
+Route::get('/addLibro', [LibroController::class, 'addLibro'])->name('addLibro');
+Route::post('/addLibro', [LibroController::class, 'addLibro'])->name('addLibro');
+
 
 Auth::routes();
 

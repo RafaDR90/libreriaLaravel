@@ -8,7 +8,7 @@
                     <div class="card-header">{{ __('Gestion de reservas') }}</div>
                     <div class="card-body">
                         @foreach($libros as $libro)
-                            <!--Obtiene $id del cliente que tiene el libro-->
+                            <!--Obtiene el usuario con $libro->usuario_id-->
 
                             <div class="libro {{ $libro->prestado!='no' ? 'text-muted' : '' }} d-flex justify-content-between align-items-center">
                                 <div>
