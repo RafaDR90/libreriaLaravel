@@ -15,13 +15,19 @@ use App\Models\User as ModelsUser;
 
 class LibroController extends Controller
 {
+    /**
+     * Reserva un libro.
+     *
+     * @param int $id
+     * @return RedirectResponse
+     */
     public function reservarLibro($id)
     {
         //comprueba si esta logueado
         if (!auth()->check()) {
             return redirect()->route('login');
         }
-    //valida la id
+        //valida la id
         $id=(int)$id;
         $validator = validator(['id' => $id], [
             'id' => 'required|integer|exists:libros,id',
@@ -38,11 +44,16 @@ class LibroController extends Controller
         $prestamo->usuario_id = auth()->user()->id;
         $prestamo->libro_id = $id;
         $prestamo->fecha_salida = date('Y-m-d');
-        $prestamo->fecha_entrada =null;
+        $prestamo->fecha_entrada = null;
         $prestamo->save();
         return redirect()->route('welcome');
     }
 
+    /**
+     * Muestra los libros reservados por el usuario logueado.
+     *
+     * @return View|RedirectResponse
+     */
     public function libros_reservados()
     {
         //comprueba si esta logueado
@@ -61,6 +72,12 @@ class LibroController extends Controller
         return view('libros/libros-reservados', ['libros' => $libros]);
     }
 
+    /**
+     * Cancela la recogida de un libro reservado.
+     *
+     * @param int $libroId
+     * @return RedirectResponse
+     */
     public function cancelaRecogida($libroId)
     {
         //comprueba si esta logueado
@@ -89,6 +106,11 @@ class LibroController extends Controller
         return redirect()->route('libros-reservados');
     }
 
+    /**
+     * Muestra la vista de gestión de reservas de libros.
+     *
+     * @return View
+     */
     public function gestionReservas()
     {
         //obtiene todos los id de libros de la tabla reservas que no tengan fecha de entrada
@@ -105,6 +127,12 @@ class LibroController extends Controller
         return view('libros/gestion-reservas', ['libros' => $libros]);
     }
 
+    /**
+     * Confirma la entrega de un libro reservado.
+     *
+     * @param int $libroId
+     * @return RedirectResponse
+     */
     public function confirmarEntrega($libroId)
     {
         //comprueba si esta logueado y su rol es admin
@@ -126,6 +154,12 @@ class LibroController extends Controller
         return redirect()->route('gestionReservas');
     }
 
+    /**
+     * Confirma la recogida de un libro reservado.
+     *
+     * @param int $libroId
+     * @return RedirectResponse|View
+     */
     public function confirmarRecogida($libroId)
     {
         //comprueba si esta logueado y su rol es admin
@@ -135,8 +169,8 @@ class LibroController extends Controller
         $request = request();
         if ($request->isMethod('get')) {
             return view('libros/form-anomalias', ['libroId' => $libroId]);
-        }else {
-            if ($request->input('datos.anomalia')!=null){
+        } else {
+            if ($request->input('datos.anomalia') != null) {
                 //validamos datos.estado
                 $validator = validator($request->all(), [
                     'datos.estado' => 'required|in:bueno,malo,critico',
@@ -189,10 +223,10 @@ class LibroController extends Controller
         }
     }
 
-
     /**
-     * Muestra la vista de gestion de libros
-     * @return Application|Factory|View|\Illuminate\Foundation\Application|RedirectResponse
+     * Muestra la vista de gestión de libros.
+     *
+     * @return Application|Factory|View|RedirectResponse
      */
     public function gestionLibros()
     {
@@ -204,6 +238,12 @@ class LibroController extends Controller
         return view('libros/gestion-libros', ['libros' => $libros]);
     }
 
+    /**
+     * Elimina un libro.
+     *
+     * @param int $id
+     * @return RedirectResponse
+     */
     public function eliminarLibro($id)
     {
         if (!auth()->check() || auth()->user()->rol != 'admin') {
@@ -227,6 +267,13 @@ class LibroController extends Controller
         $libro->save();
         return redirect()->route('gestionLibros');
     }
+
+    /**
+     * Muestra el formulario para editar un libro.
+     *
+     * @param int $libroId
+     * @return Application|Factory|View|RedirectResponse
+     */
     public function formEditarLibro($libroId)
     {
         if (!auth()->check() || auth()->user()->rol != 'admin') {
@@ -278,6 +325,11 @@ class LibroController extends Controller
         }
     }
 
+    /**
+     * Agrega un libro.
+     *
+     * @return Application|Factory|View|RedirectResponse
+     */
     public function addLibro()
     {
         if (!auth()->check() || auth()->user()->rol != 'admin') {
