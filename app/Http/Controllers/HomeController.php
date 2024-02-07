@@ -6,6 +6,7 @@ use App\Entity\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Libro;
 use App\Models\User as ModelsUser;
@@ -58,6 +59,10 @@ class HomeController extends Controller
         return view('welcome',['libros'=>$libros,'categorias'=>$categorias]);
     }
 
+    /**
+     * Muestra el edicion de perfil del usuario, si viene por post lo edita
+     * @return Application|Factory|View|\Illuminate\Foundation\Application|RedirectResponse
+     */
     public function editarPerfil()
     {
         if (!auth()->check()) {

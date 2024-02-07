@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Anomalia;
 use App\Models\User as ModelsUser;
 use App\Models\Libro;
 class AnomaliaController extends Controller
 {
+    /**
+     * muetra las anomalias
+     * @return Application|Factory|View|\Illuminate\Foundation\Application|RedirectResponse
+     */
     public function muestraAnomalias(){
         //comprueba que estoy logueado
         if (!auth()->check()){

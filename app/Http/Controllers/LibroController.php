@@ -314,7 +314,7 @@ class LibroController extends Controller
                 'estado' => 'required|in:bueno,malo,critico',
             ]);
             if ($validator->fails()) {
-                return redirect()->route('/');
+                return redirect()->route('gestionLibros')->with('error', 'Error al editar el libro.');
             }
             //modifica el libro en la base de datos
             $libro = Libro::find($libroId);
@@ -325,7 +325,7 @@ class LibroController extends Controller
             $libro->lanzamiento = $request->input('datos.lanzamiento');
             $libro->estado = $request->input('datos.estado');
             $libro->save();
-            return redirect()->route('gestionLibros');
+            return redirect()->route('gestionLibros')->with('exito', 'Libro editado correctamente.');
         }
     }
 
@@ -360,7 +360,7 @@ class LibroController extends Controller
                 'estado' => 'required|in:bueno,malo,critico',
             ]);
             if ($validator->fails()) {
-                return redirect()->route('/');
+                return redirect()->route('gestionLibros')->with('error', 'Error al añadir el libro.');
             }
             //crea el libro en la base de datos
             $libro = new Libro();
@@ -373,7 +373,7 @@ class LibroController extends Controller
             $libro->prestado = 'no';
             $libro->eliminado = 0;
             $libro->save();
-            return redirect()->route('gestionLibros');
+            return redirect()->route('gestionLibros')->with('exito', 'Libro añadido correctamente.');
             }
         }
 }
