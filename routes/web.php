@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LibroController;
+use App\Http\Controllers\AnomaliaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,7 @@ use App\Http\Controllers\LibroController;
 */
 
 Route::get('/', [HomeController::class ,'welcome'])->name('welcome');
+Route::post('/', [HomeController::class ,'welcome'])->name('welcome');
 
 Route::get('/reservar-libro/{id}', [LibroController::class, 'reservarLibro'])->name('reservaLibro');
 
@@ -39,6 +41,12 @@ Route::post('/formEditarLibro/{id}', [LibroController::class, 'formEditarLibro']
 
 Route::get('/addLibro', [LibroController::class, 'addLibro'])->name('addLibro');
 Route::post('/addLibro', [LibroController::class, 'addLibro'])->name('addLibro');
+
+Route::get('/muestraAnomalias', [AnomaliaController::class, 'muestraAnomalias'])->name('muestraAnomalias');
+
+Route::get('/editarPerfil', [HomeController::class, 'editarPerfil'])->name('editarPerfil');
+Route::post('/editarPerfil', [HomeController::class, 'editarPerfil'])->name('editarPerfil');
+
 
 
 Auth::routes();

@@ -1,5 +1,3 @@
 
-mostrar historial de anomalias
-
 filtrar por categorias de libros
 

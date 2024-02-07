@@ -1,0 +1,13 @@
+.barraInferior {
+    position: relative;
+}
+
+.barraInferior::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    left: 0;
+    bottom: 0;
+    background: #0a0800;
+}
