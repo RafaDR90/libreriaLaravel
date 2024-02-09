@@ -10,6 +10,7 @@
                             <label for="categorias">Filtrar por Categoria &nbsp;</label>
                             <select name="categoria"> <!-- Agrega el atributo name -->
                                 @if(isset($categorias))
+                                    <option>Todo</option>
                                     @foreach($categorias as $categoria)
                                         <option value="{{$categoria}}">{{$categoria}}</option> <!-- Usa el valor de la categoría como value -->
                                     @endforeach
