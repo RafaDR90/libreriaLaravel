@@ -43,20 +43,27 @@ class HomeController extends Controller
         $libros = Libro::where('eliminado', false)->get();
         $categorias = [];
         foreach ($libros as $libro) {
-            //compruebo que en categorias esta la categoria y si no esta la meto
+            // Compruebo que en categorias esta la categoria y si no esta la meto
             if (!in_array($libro->categoria, $categorias)) {
                 $categorias[] = $libro->categoria;
             }
         }
-        //comprueba que viene por get
+
+        // Comprueba si se envió un formulario por POST
         if (request()->isMethod('post')) {
-            //cojo la categoria de post
+            // Obtengo la categoría seleccionada del formulario
             $categoria = request()->input('categoria');
-            //obtengo libros por categoria
-            $libros = Libro::where('categoria', $categoria)->where('eliminado', false)->get();
+
+            // Si la categoría seleccionada es "Todo", se muestran todos los libros sin filtrar
+            if ($categoria === 'Todo') {
+                $libros = Libro::where('eliminado', false)->get();
+            } else {
+                // Obtengo libros por categoría
+                $libros = Libro::where('categoria', $categoria)->where('eliminado', false)->get();
+            }
         }
 
-        return view('welcome',['libros'=>$libros,'categorias'=>$categorias]);
+        return view('welcome', ['libros' => $libros, 'categorias' => $categorias]);
     }
 
     /**
