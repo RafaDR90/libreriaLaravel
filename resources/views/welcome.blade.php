@@ -9,6 +9,7 @@
                             @csrf
                             <label for="categorias">Filtrar por Categoria &nbsp;</label>
                             <select name="categoria"> <!-- Agrega el atributo name -->
+                                <option value="todos">Todas</option>
                                 @if(isset($categorias))
                                     @foreach($categorias as $categoria)
                                         <option value="{{$categoria}}">{{$categoria}}</option> <!-- Usa el valor de la categoría como value -->

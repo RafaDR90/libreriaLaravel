@@ -53,7 +53,9 @@ class HomeController extends Controller
             //cojo la categoria de post
             $categoria = request()->input('categoria');
             //obtengo libros por categoria
-            $libros = Libro::where('categoria', $categoria)->where('eliminado', false)->get();
+            if($categoria != 'todos'){
+                $libros = Libro::where('categoria', $categoria)->where('eliminado', false)->get();
+            }
         }
 
         return view('welcome',['libros'=>$libros,'categorias'=>$categorias]);
